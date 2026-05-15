@@ -3,13 +3,15 @@ using UnityEngine;
 // Sources consultees:
 // - MonoBehaviour: https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
 // - Mathf.Max: https://docs.unity3d.com/ScriptReference/Mathf.Max.html
-// Aide utilisee: Codex a propose les grandes lignes pour une vie de base et un Game Over.
 // VieBase gere la vie du batiment principal, l'HotelDeVille.
 // Quand sa vie tombe a zero, le script avertit GestionJeu pour terminer la partie.
+[DisallowMultipleComponent]
 public class VieBase : MonoBehaviour
 {
     // Vie maximum et vie courante. currentHealth est public pour etre affiche dans l'UI.
+    [Min(1)]
     public int maxHealth = 150;
+    [Min(0)]
     public int currentHealth = 150;
     [Range(0.05f, 1f)] public float visualAlpha = 0.35f;
 

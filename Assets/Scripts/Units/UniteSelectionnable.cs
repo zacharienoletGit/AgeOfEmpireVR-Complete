@@ -4,13 +4,15 @@ using UnityEngine;
 // - Transform: https://docs.unity3d.com/ScriptReference/Transform.html
 // - Vector3.MoveTowards: https://docs.unity3d.com/ScriptReference/Vector3.MoveTowards.html
 // - GameObject.CreatePrimitive: https://docs.unity3d.com/ScriptReference/GameObject.CreatePrimitive.html
-// Aide utilisee: Codex a donne les grandes lignes pour selectionner et deplacer une unite RTS.
 // UniteSelectionnable represente une unite controlee par le joueur.
 // Elle peut etre selectionnee, recevoir une destination, ou recevoir une cible a attaquer.
+[DisallowMultipleComponent]
 public class UniteSelectionnable : MonoBehaviour
 {
     // Vitesse volontairement basse car les objets sont sur une petite map miniature.
+    [Min(0f)]
     public float moveSpeed = 0.45f;
+    [Min(0f)]
     public float stopDistance = 0.05f;
 
     // Destination de mouvement simple, sans NavMesh.
@@ -60,7 +62,8 @@ public class UniteSelectionnable : MonoBehaviour
             // Deplacement vers le point clique sur la map.
             MoveStep(moveTarget);
 
-            if (Vector3.Distance(transform.position, moveTarget) <= stopDistance)
+            float stopDistanceSqr = stopDistance * stopDistance;
+            if ((transform.position - moveTarget).sqrMagnitude <= stopDistanceSqr)
                 hasMoveTarget = false;
         }
     }

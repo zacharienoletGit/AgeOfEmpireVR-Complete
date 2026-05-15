@@ -5,13 +5,14 @@ using UnityEngine;
 // - Object.Instantiate: https://docs.unity3d.com/ScriptReference/Object.Instantiate.html
 // - GameObject: https://docs.unity3d.com/ScriptReference/GameObject.html
 // - Transform.SetParent: https://docs.unity3d.com/ScriptReference/Transform.SetParent.html
-// Aide utilisee: Codex a propose les grandes lignes pour placer des tours avec du bois.
 // SystemeConstruction gere la construction des tours.
 // Quand le joueur active le mode build, son prochain clic sur le sol essaie de placer une tour.
+[DisallowMultipleComponent]
 public class SystemeConstruction : MonoBehaviour
 {
     // Si towerPrefab est null, une tour simple est creee avec des primitives Unity.
     public GameObject towerPrefab;
+    [Min(0)]
     public int towerCost = 40;
     public bool IsBuildMode { get; private set; }
 
@@ -95,7 +96,7 @@ public class SystemeConstruction : MonoBehaviour
     GameObject CreateBasicTower(Vector3 position)
     {
         // Tour prototype: un GameObject racine avec un cylindre et un cube enfant.
-        GameObject root = new GameObject("DefenseTower_Student");
+        GameObject root = new GameObject("DefenseTower_Runtime");
         root.transform.position = position;
 
         // Base ronde de la tour.

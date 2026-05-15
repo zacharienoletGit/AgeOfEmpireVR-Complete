@@ -3,9 +3,9 @@ using UnityEngine;
 // Sources consultees:
 // - AudioSource: https://docs.unity3d.com/ScriptReference/AudioSource.html
 // - AudioClip: https://docs.unity3d.com/ScriptReference/AudioClip.html
-// Aide utilisee: Codex a donne les grandes lignes pour centraliser les sons dans un script simple.
 // GestionAudio centralise les sons du prototype.
 // Les AudioClip peuvent etre assignes dans l'inspecteur si on ajoute des sons au projet plus tard.
+[DisallowMultipleComponent]
 public class GestionAudio : MonoBehaviour
 {
     public static GestionAudio Instance { get; private set; }

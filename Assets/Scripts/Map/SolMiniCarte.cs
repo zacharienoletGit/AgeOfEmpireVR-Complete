@@ -3,7 +3,6 @@ using UnityEngine;
 // Sources consultees:
 // - Component.GetComponentInParent: https://docs.unity3d.com/ScriptReference/Component.GetComponentInParent.html
 // - MonoBehaviour: https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
-// Aide utilisee: Codex a propose d'utiliser un script marqueur pour identifier le sol cliquable.
 // SolMiniCarte est un script marqueur.
 // Il ne contient pas de logique, mais il permet a PointeurVRJeu
 // de reconnaitre quelles surfaces peuvent recevoir un clic de mouvement ou de construction.

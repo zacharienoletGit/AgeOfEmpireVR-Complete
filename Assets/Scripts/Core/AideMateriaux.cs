@@ -3,8 +3,7 @@ using UnityEngine;
 // Sources consultees:
 // - Shader.Find: https://docs.unity3d.com/ScriptReference/Shader.Find.html
 // - Material: https://docs.unity3d.com/ScriptReference/Material.html
-// Aide utilisee: Codex a aide a garder seulement un petit helper de couleur,
-// parce que les objets de base sont maintenant places directement dans la scene.
+// Les objets de base sont maintenant placés directement dans la scène.
 // Cette classe ne cree pas la scene. Elle sert juste a appliquer une couleur
 // aux primitives creees pendant le jeu, comme les ennemis et les tours.
 public static class AideMateriaux

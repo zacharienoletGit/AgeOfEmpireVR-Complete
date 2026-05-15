@@ -6,10 +6,10 @@ using UnityEngine;
 // - Coroutine: https://docs.unity3d.com/ScriptReference/Coroutine.html
 // - WaitForSeconds: https://docs.unity3d.com/ScriptReference/WaitForSeconds.html
 // - Instantiate: https://docs.unity3d.com/ScriptReference/Object.Instantiate.html
-// Aide utilisee: Codex a propose une logique simple de vagues et les sources Unity a citer.
 // GestionVagues controle les vagues d'ennemis.
 // Il attend un peu, fait apparaitre les ennemis un par un,
 // puis attend que la vague soit terminee avant de lancer la suivante.
+[DisallowMultipleComponent]
 public class GestionVagues : MonoBehaviour
 {
     // Si enemyPrefab est vide, le script cree un ennemi capsule automatiquement.
@@ -17,9 +17,13 @@ public class GestionVagues : MonoBehaviour
     [Header("Wave setup")]
     public GameObject enemyPrefab;
     public Transform[] spawnPoints;
+    [Min(0f)]
     public float firstWaveDelay = 1.5f;
+    [Min(0f)]
     public float spawnDelay = 0.65f;
+    [Min(0f)]
     public float timeBetweenWaves = 2f;
+    [Min(1)]
     public int totalWaves = 4;
 
     public int CurrentWave { get; private set; }
@@ -43,7 +47,7 @@ public class GestionVagues : MonoBehaviour
             manager = GestionJeu.Instance;
 
         if (townHall == null)
-            townHall = FindObjectOfType<VieBase>();
+            townHall = FindFirstObjectByType<VieBase>();
     }
 
     public void Configure(GestionJeu gameManager, VieBase baseToAttack, Transform[] points)
@@ -133,7 +137,7 @@ public class GestionVagues : MonoBehaviour
             // Ennemi de secours fait avec une capsule Unity.
             // Comme ca le prototype reste jouable meme sans assets importes.
             enemyObject = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            enemyObject.name = "Enemy_Student_" + wave;
+            enemyObject.name = "Enemy_Wave_" + wave;
             enemyObject.transform.position = spawnPosition;
             enemyObject.transform.localScale = new Vector3(0.18f, 0.22f, 0.18f);
             AideMateriaux.ApplyMaterial(enemyObject, new Color(0.75f, 0.18f, 0.12f));

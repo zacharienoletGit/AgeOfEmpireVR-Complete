@@ -4,16 +4,19 @@ using UnityEngine;
 // - Transform: https://docs.unity3d.com/ScriptReference/Transform.html
 // - Vector3.MoveTowards: https://docs.unity3d.com/ScriptReference/Vector3.MoveTowards.html
 // - Time.deltaTime: https://docs.unity3d.com/ScriptReference/Time-deltaTime.html
-// Aide utilisee: Codex a donne les grandes lignes pour une IA simple qui avance vers la base.
 // EnnemiSimple controle un ennemi tres simple:
 // il marche vers l'HotelDeVille, puis l'attaque a intervalle regulier.
 // Il n'utilise pas NavMesh pour garder le prototype facile a comprendre.
+[DisallowMultipleComponent]
 public class EnnemiSimple : MonoBehaviour
 {
     // Base a attaquer. Normalement assignee par GestionVagues.
     public VieBase targetBase;
+    [Min(0f)]
     public float moveSpeed = 0.25f;
+    [Min(0f)]
     public float stopDistance = 0.22f;
+    [Min(0f)]
     public float attackDelay = 0.95f;
 
     // CombatUnite contient les stats de combat comme les degats et la vie.
@@ -28,7 +31,7 @@ public class EnnemiSimple : MonoBehaviour
 
         // Securite: si GestionVagues n'a pas donne la base, on la cherche dans la scene.
         if (targetBase == null)
-            targetBase = FindObjectOfType<VieBase>();
+            targetBase = FindFirstObjectByType<VieBase>();
 
         // Inscrit cet ennemi dans GestionJeu pour que le compteur d'ennemis soit exact.
         if (!registered)

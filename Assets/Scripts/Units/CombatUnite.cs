@@ -5,10 +5,10 @@ using UnityEngine;
 // - Time.deltaTime: https://docs.unity3d.com/ScriptReference/Time-deltaTime.html
 // - Object.Destroy: https://docs.unity3d.com/ScriptReference/Object.Destroy.html
 // - Transform.localScale: https://docs.unity3d.com/ScriptReference/Transform-localScale.html
-// Aide utilisee: Codex a propose les grandes lignes pour vie, degats et cooldown.
 // CombatUnite contient les statistiques communes des unites:
 // equipe, vie, degats, portee et cooldown d'attaque.
 // Il est utilise autant par les unites du joueur que par les ennemis.
+[DisallowMultipleComponent]
 public class CombatUnite : MonoBehaviour
 {
     // Permet de savoir qui peut attaquer qui.
@@ -20,12 +20,19 @@ public class CombatUnite : MonoBehaviour
 
     // Valeurs simples modifiables dans l'inspecteur ou par GestionVagues.
     public Team team = Team.Player;
+    [Min(1)]
     public int maxHealth = 40;
+    [Min(0)]
     public int currentHealth = 40;
+    [Min(0)]
     public int damage = 8;
+    [Min(0f)]
     public float attackRange = 0.35f;
+    [Min(0f)]
     public float attackCooldown = 0.75f;
+    [Min(0f)]
     public float attackAnimDuration = 0.14f;
+    [Min(1f)]
     public float attackAnimScale = 1.18f;
 
     // Temps restant avant la prochaine attaque.
@@ -73,7 +80,8 @@ public class CombatUnite : MonoBehaviour
         if (target.team == team)
             return false;
 
-        return Vector3.Distance(transform.position, target.transform.position) <= attackRange;
+        float attackRangeSqr = attackRange * attackRange;
+        return (transform.position - target.transform.position).sqrMagnitude <= attackRangeSqr;
     }
 
     public void Attack(CombatUnite target)

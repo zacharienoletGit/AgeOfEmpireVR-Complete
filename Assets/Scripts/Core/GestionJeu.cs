@@ -4,12 +4,15 @@ using UnityEngine.SceneManagement;
 // Sources consultees:
 // - MonoBehaviour: https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
 // - SceneManager: https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
-// Aide utilisee: Codex a donne les grandes lignes du GestionJeu et les sources Unity a verifier.
 // GestionJeu est le script central du prototype.
 // Il garde l'etat de la partie, les ressources, le score, la selection du joueur
 // et il appelle les autres systemes comme les vagues, l'interface et la construction.
+[DisallowMultipleComponent]
 public class GestionJeu : MonoBehaviour
 {
+    const int EnemyScoreReward = 10;
+    const int EnemyWoodReward = 10;
+
     // Les etats possibles du jeu. Ca evite d'avoir plusieurs booleens partout
     // comme isPlaying, isGameOver, isInMenu, etc.
     public enum GameState
@@ -23,8 +26,8 @@ public class GestionJeu : MonoBehaviour
     public static GestionJeu Instance { get; private set; }
 
     // References principales. Elles peuvent etre assignees dans Unity,
-    // mais le script peut aussi les retrouver automatiquement avec FindObjectOfType.
-    [Header("Main references")]
+    // mais le script peut aussi les retrouver automatiquement au demarrage.
+    [Header("Main References")]
     public GestionVagues waveManager;
     public InterfaceJeuVR gameUI;
     public VieBase townHall;
@@ -32,7 +35,8 @@ public class GestionJeu : MonoBehaviour
 
     // Valeurs simples du prototype. Le bois sert a construire des tours,
     // et le score augmente quand un ennemi est detruit.
-    [Header("Student values")]
+    [Header("Gameplay Values")]
+    [Min(0)]
     public int startWood = 70;
     public int wood;
     public int score;
@@ -132,8 +136,8 @@ public class GestionJeu : MonoBehaviour
             return;
 
         EnemiesAlive = Mathf.Max(0, EnemiesAlive - 1);
-        score += 10;
-        wood += 10;
+        score += EnemyScoreReward;
+        wood += EnemyWoodReward;
 
         CheckVictory();
         UpdateUI();
@@ -202,6 +206,9 @@ public class GestionJeu : MonoBehaviour
     {
         // Methode utilisee par SystemeConstruction. Elle retourne false si le joueur
         // n'a pas assez de bois, donc la tour ne sera pas construite.
+        if (amount <= 0)
+            return true;
+
         if (wood < amount)
             return false;
 
@@ -234,16 +241,16 @@ public class GestionJeu : MonoBehaviour
         // Permet au prototype de marcher meme si les references ne sont pas assignees
         // dans l'inspecteur Unity. C'est moins optimise, mais pratique pour ce petit projet.
         if (waveManager == null)
-            waveManager = FindObjectOfType<GestionVagues>();
+            waveManager = FindFirstObjectByType<GestionVagues>();
 
         if (gameUI == null)
-            gameUI = FindObjectOfType<InterfaceJeuVR>();
+            gameUI = FindFirstObjectByType<InterfaceJeuVR>();
 
         if (townHall == null)
-            townHall = FindObjectOfType<VieBase>();
+            townHall = FindFirstObjectByType<VieBase>();
 
         if (buildSystem == null)
-            buildSystem = FindObjectOfType<SystemeConstruction>();
+            buildSystem = FindFirstObjectByType<SystemeConstruction>();
     }
 
     void CheckVictory()

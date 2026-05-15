@@ -10,9 +10,10 @@ using UnityEngine.UI;
 // - Text: https://docs.unity3d.com/ScriptReference/UI.Text.html
 // - EventSystem: https://docs.unity3d.com/Packages/com.unity.ugui@2.0/api/UnityEngine.EventSystems.EventSystem.html
 // - TrackedDeviceGraphicRaycaster: https://docs.unity3d.com/Packages/com.unity.xr.interaction.toolkit@3.3/api/UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster.html
-// Aide utilisee: Codex a donne les grandes lignes pour creer une UI World Space par code.
+// - Cours Environnements immersifs: interface VR lisible avec boutons en World Space.
 // InterfaceJeuVR gere l'interface World Space du prototype.
 // Si aucun Canvas n'est place dans la scene, ce script en cree un automatiquement.
+[DisallowMultipleComponent]
 public class InterfaceJeuVR : MonoBehaviour
 {
     public const string CanvasObjectName = "InterfaceJeuVR_Visible";
@@ -92,7 +93,7 @@ public class InterfaceJeuVR : MonoBehaviour
             // Affiche la vie de l'HotelDeVille. Si la reference est manquante, affiche 0 pour eviter une erreur.
             int health = manager.townHall != null ? manager.townHall.currentHealth : 0;
             int maxHealth = manager.townHall != null ? manager.townHall.maxHealth : 0;
-            healthText.text = "HotelDeVille PV: " + health + " / " + maxHealth;
+            healthText.text = "Hotel de Ville PV: " + health + " / " + maxHealth;
         }
 
         // Ressources et score du joueur.
@@ -128,25 +129,25 @@ public class InterfaceJeuVR : MonoBehaviour
             return "";
 
         if (manager.CurrentState == GestionJeu.GameState.MainMenu)
-            return "Press Start pour commencer";
+            return "Appuyez sur Start pour commencer";
 
         if (manager.CurrentState == GestionJeu.GameState.GameOver)
-            return "Game Over - l'HotelDeVille est detruit";
+            return "Game Over - l'Hotel de Ville est detruit";
 
         if (manager.CurrentState == GestionJeu.GameState.Victory)
-            return "Victoire - toute les vagues sont fini";
+            return "Victoire - toutes les vagues sont terminees";
 
         if (manager.buildSystem != null && manager.buildSystem.IsBuildMode)
-            return "Build mode: click sur le sol pour placer une tower";
+            return "Mode construction: cliquez sur le sol pour placer une tour";
 
-        return "Defend l'HotelDeVille";
+        return "Defendez l'Hotel de Ville";
     }
 
     string GetHintText()
     {
         // Petit rappel des controles. C'est volontairement court pour rester lisible
         // dans le casque VR.
-        return "Casque/manette: viser + trigger   A/X: start   B/Y: build   Menu/R: restart";
+        return "Casque/manette: viser + gachette   A/X: start   B/Y: build   Menu/R: restart";
     }
 
     void HookButtons()
@@ -234,7 +235,7 @@ public class InterfaceJeuVR : MonoBehaviour
     {
         // Les boutons Unity UI ont besoin d'un EventSystem dans la scene.
         // On en cree un si la scene n'en contient pas deja.
-        EventSystem eventSystem = FindObjectOfType<EventSystem>();
+        EventSystem eventSystem = FindFirstObjectByType<EventSystem>();
         GameObject eventObject;
 
         if (eventSystem == null)

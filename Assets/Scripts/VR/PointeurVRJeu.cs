@@ -9,10 +9,11 @@ using UnityEngine.XR;
 // - Input System Mouse/Keyboard: https://docs.unity3d.com/Packages/com.unity.inputsystem%401.19/manual/index.html
 // - XR InputDevices: https://docs.unity3d.com/ScriptReference/XR.InputDevices.html
 // - Button.onClick: https://docs.unity3d.com/ScriptReference/UI.Button-onClick.html
-// Aide utilisee: Codex a donne les grandes lignes pour relier casque, manettes, souris et gameplay.
+// - Cours Environnements immersifs: pointage VR et interactions en World Space.
 // PointeurVRJeu transforme un rayon en actions de jeu.
 // Le joueur peut viser avec la manette droite, la manette gauche ou le regard du casque
 // si aucune manette n'est trouvee. La souris reste seulement comme simulateur dans Unity.
+[DisallowMultipleComponent]
 public class PointeurVRJeu : MonoBehaviour
 {
     // Camera utilisee pour la visee au centre du casque et pour le test souris.
@@ -23,6 +24,7 @@ public class PointeurVRJeu : MonoBehaviour
     public Transform rightController;
     public Transform leftController;
 
+    [Min(0.1f)]
     public float rayDistance = 10f;
     public LayerMask rayMask = ~0;
 
@@ -76,7 +78,7 @@ public class PointeurVRJeu : MonoBehaviour
             rayCamera = Camera.main;
 
         if (rayCamera == null)
-            rayCamera = FindObjectOfType<Camera>();
+            rayCamera = FindFirstObjectByType<Camera>();
 
         if (rightController == null)
             rightController = FindTransformByNames("Right Controller", "RightHand Controller", "XR Controller Right", "RightHand");
@@ -308,7 +310,7 @@ public class PointeurVRJeu : MonoBehaviour
 
     Transform FindTransformByNames(params string[] possibleNames)
     {
-        Transform[] transforms = FindObjectsOfType<Transform>();
+        Transform[] transforms = FindObjectsByType<Transform>(FindObjectsSortMode.None);
 
         for (int i = 0; i < possibleNames.Length; i++)
         {
@@ -327,7 +329,7 @@ public class PointeurVRJeu : MonoBehaviour
         if (!showPointerRay || pointerLine != null)
             return;
 
-        GameObject lineObject = new GameObject("Student VR Pointer Ray");
+        GameObject lineObject = new GameObject("VR Pointer Ray");
         lineObject.transform.SetParent(transform);
         pointerLine = lineObject.AddComponent<LineRenderer>();
         pointerLine.positionCount = 2;

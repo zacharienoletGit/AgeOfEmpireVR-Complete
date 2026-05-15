@@ -2,19 +2,24 @@ using UnityEngine;
 
 // Sources consultees:
 // - Gizmos: https://docs.unity3d.com/ScriptReference/Gizmos.html
-// - Object.FindObjectsOfType: https://docs.unity3d.com/ScriptReference/Object.FindObjectsOfType.html
+// - Object.FindObjectsByType: https://docs.unity3d.com/ScriptReference/Object.FindObjectsByType.html
 // - Vector3.Distance: https://docs.unity3d.com/ScriptReference/Vector3.Distance.html
-// Aide utilisee: Codex a donne les grandes lignes pour une tour automatique simple.
 // TourDefenseSimple est la logique d'une tour defensive.
 // La tour cherche automatiquement l'ennemi le plus proche dans sa portee,
 // puis lui inflige des degats a intervalle regulier.
+[DisallowMultipleComponent]
 public class TourDefenseSimple : MonoBehaviour
 {
     // range = rayon de detection, damage = degats par tir, fireDelay = temps entre deux tirs.
+    [Min(0f)]
     public float range = 0.9f;
+    [Min(0)]
     public int damage = 10;
+    [Min(0f)]
     public float fireDelay = 0.7f;
+    [Min(0f)]
     public float shootAnimDuration = 0.12f;
+    [Min(1f)]
     public float shootAnimScale = 1.15f;
 
     // Timer interne pour limiter la vitesse de tir.
@@ -55,9 +60,9 @@ public class TourDefenseSimple : MonoBehaviour
     CombatUnite FindClosestEnemy()
     {
         // On prend tous les CombatUnite de la scene et on garde seulement les ennemis vivants.
-        CombatUnite[] combats = FindObjectsOfType<CombatUnite>();
+        CombatUnite[] combats = FindObjectsByType<CombatUnite>(FindObjectsSortMode.None);
         CombatUnite closest = null;
-        float closestDistance = range;
+        float closestDistance = range * range;
 
         for (int i = 0; i < combats.Length; i++)
         {
@@ -65,7 +70,7 @@ public class TourDefenseSimple : MonoBehaviour
                 continue;
 
             // Si cet ennemi est plus proche que l'ancien meilleur choix, il devient la cible.
-            float distance = Vector3.Distance(transform.position, combats[i].transform.position);
+            float distance = (transform.position - combats[i].transform.position).sqrMagnitude;
             if (distance <= closestDistance)
             {
                 closest = combats[i];
