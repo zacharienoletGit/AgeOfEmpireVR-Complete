@@ -11,6 +11,7 @@ public class VieBase : MonoBehaviour
     // Vie maximum et vie courante. currentHealth est public pour etre affiche dans l'UI.
     public int maxHealth = 150;
     public int currentHealth = 150;
+    [Range(0.05f, 1f)] public float visualAlpha = 0.35f;
 
     public bool IsDead
     {
@@ -22,6 +23,8 @@ public class VieBase : MonoBehaviour
         // Si la vie n'a pas ete initialisee, on remet la base a sa vie maximum.
         if (currentHealth <= 0)
             currentHealth = maxHealth;
+
+        ApplyTransparentVisuals();
     }
 
     public void ResetHealth()
@@ -44,5 +47,51 @@ public class VieBase : MonoBehaviour
         // Si la vie atteint zero, la partie passe en Game Over.
         if (currentHealth <= 0)
             GestionJeu.Instance?.GameOver();
+    }
+
+    void ApplyTransparentVisuals()
+    {
+        // L'HotelDeVille reste visible, mais le joueur voit et clique plus facilement la carte derriere.
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+            Material[] materials = renderers[i].materials;
+            for (int j = 0; j < materials.Length; j++)
+                MakeMaterialTransparent(materials[j]);
+        }
+    }
+
+    void MakeMaterialTransparent(Material material)
+    {
+        if (material == null)
+            return;
+
+        Color color = material.HasProperty("_BaseColor") ? material.GetColor("_BaseColor") : material.color;
+        color.a = visualAlpha;
+
+        if (material.HasProperty("_BaseColor"))
+            material.SetColor("_BaseColor", color);
+
+        if (material.HasProperty("_Color"))
+            material.SetColor("_Color", color);
+
+        if (material.HasProperty("_Surface"))
+            material.SetFloat("_Surface", 1f);
+
+        if (material.HasProperty("_SrcBlend"))
+            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+
+        if (material.HasProperty("_DstBlend"))
+            material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+
+        if (material.HasProperty("_ZWrite"))
+            material.SetFloat("_ZWrite", 0f);
+
+        material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        material.EnableKeyword("_ALPHABLEND_ON");
+        material.DisableKeyword("_ALPHATEST_ON");
+        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
     }
 }

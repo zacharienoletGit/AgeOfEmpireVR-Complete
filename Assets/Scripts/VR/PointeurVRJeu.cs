@@ -134,7 +134,7 @@ public class PointeurVRJeu : MonoBehaviour
     {
         Ray ray = GetPointerRay(controllerSource, fromMouse);
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, rayDistance, rayMask, QueryTriggerInteraction.Collide))
+        if (!TryGetGameplayHit(ray, out RaycastHit hit))
             return;
 
         // Les boutons UI ont des BoxCollider ajoutes par InterfaceJeuVR. Donc une gachette
@@ -177,6 +177,35 @@ public class PointeurVRJeu : MonoBehaviour
             return;
 
         button.onClick.Invoke();
+    }
+
+    bool TryGetGameplayHit(Ray ray, out RaycastHit bestHit)
+    {
+        // RaycastAll permet de traverser l'HotelDeVille transparent et de toucher la carte derriere.
+        RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance, rayMask, QueryTriggerInteraction.Collide);
+        bestHit = default;
+        bool foundHit = false;
+        float closestDistance = float.MaxValue;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (ShouldIgnoreHit(hits[i]) || hits[i].distance >= closestDistance)
+                continue;
+
+            bestHit = hits[i];
+            closestDistance = hits[i].distance;
+            foundHit = true;
+        }
+
+        return foundHit;
+    }
+
+    bool ShouldIgnoreHit(RaycastHit hit)
+    {
+        if (hit.collider == null)
+            return true;
+
+        return hit.collider.GetComponentInParent<VieBase>() != null;
     }
 
     Ray GetPointerRay(Transform controllerSource, bool fromMouse)
